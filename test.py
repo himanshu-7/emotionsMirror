@@ -1,5 +1,4 @@
 ########### Python 2.7 #############
-#unnecessary comments
 import httplib, urllib, base64
 
 headers = {
@@ -7,8 +6,6 @@ headers = {
     'Content-Type': 'application/json',
     'Ocp-Apim-Subscription-Key': 'b6380671cd354af6900cabe8d297fd7c',
 }
-//hello
-/hello
 
 params = urllib.urlencode({
 })
