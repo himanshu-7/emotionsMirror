@@ -8,6 +8,7 @@ headers = {
     'Ocp-Apim-Subscription-Key': 'b6380671cd354af6900cabe8d297fd7c',
 }
 //hello
+/hello
 
 params = urllib.urlencode({
 })
