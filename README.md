@@ -5,5 +5,5 @@ Nilay <br/>
 Priyanka <br/>
 Himanshu <br/>
 Chinmay <br/>
-Ninad <br/>
+Ninad Joshi <br/>
 
