@@ -1,10 +1,13 @@
 ########### Python 2.7 #############
+
+# Implementation of this script is unclear and this is been lying around since the first commit.
+# Clean this up when/if not required
 import httplib, urllib, base64
 
 headers = {
     # Request headers. Replace the placeholder key below with your subscription key.
     'Content-Type': 'application/json',
-    'Ocp-Apim-Subscription-Key': '4984d21cefbf4f498e03e7e1f89da4a2',
+    'Ocp-Apim-Subscription-Key': 'YOUR_HEX_KEY',
 }
 
 params = urllib.urlencode({
