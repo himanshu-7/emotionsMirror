@@ -1,5 +1,5 @@
 ########### Python 2.7 #############
-import httplib, urllib, base64, json
+import httplib, urllib, base64, json, requests, time
 
 headers_octet = {
     # Request headers
@@ -13,6 +13,9 @@ headers_json = {
     'Ocp-Apim-Subscription-Key': '6a4951f9624543d58a63634fe264e3e7',
 }
 
+headers = {
+    'Content-Type': 'application/json'
+}
 
 params = urllib.urlencode({
     # Request parameters
@@ -82,7 +85,36 @@ try:
         # print (json.dumps(parsed, sort_keys=True, indent=2))
         # print(parsed['isIdentical'])
     if(parsed['isIdentical'] == True):
-        print("Images are of same person.")
+        #login and get token
+        data_2 = '{"method": "login","params": { "appType": "Kasa_Android", "cloudPassword" : "15111992k","cloudUserName": "himanshu.7.shah@gmail.com", "terminalUUID": "e36193be-f046-43d4-9669-ceab734b05a3"}}'
+        response = requests.post('https://wap.tplinkcloud.com/', headers=headers, data=data_2)
+        r = response.json()
+        print ("%s" %r)
+        token1 = r['result']['token']
+        print ("%s" %token1)
+
+        #get device list
+        data_3 = '{"method": "getDeviceList","params": {}}'
+        response = requests.post('https://wap.tplinkcloud.com/?token=%s'%token1,headers=headers, data=data_3)
+        r = response.json()
+        print ("%s" %r)
+        device1 = r['result']['deviceList'][0]['deviceId']
+        print ("%s" %device1)
+
+        #turn lamp on
+        data_4 = '{"method":"passthrough", "params": {"deviceId": "8012C3C1DED0BCD794179E8675A70FE9189105B5", "requestData": "{\\"smartlife.iot.smartbulb.lightingservice\\":{\\"transition_light_state\\":{\\"on_off\\":1}}}" }}'
+    	response = requests.post('https://wap.tplinkcloud.com/?token=%s'%token1,headers=headers, data=data_4)
+    	r = response.text
+    	print ("%s" %r)
+
+        #wait for some time
+        time.sleep(10)
+
+        data_4 = '{"method":"passthrough", "params": {"deviceId": "8012C3C1DED0BCD794179E8675A70FE9189105B5", "requestData": "{\\"smartlife.iot.smartbulb.lightingservice\\":{\\"transition_light_state\\":{\\"on_off\\":0}}}" }}'
+    	response = requests.post('https://wap.tplinkcloud.com/?token=%s'%token1,headers=headers, data=data_4)
+    	r = response.text
+    	print ("%s" %r)
+
     else:
         print("Different person")
 except Exception as e:
