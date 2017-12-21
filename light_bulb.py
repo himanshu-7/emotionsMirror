@@ -1,5 +1,6 @@
 import requests
 
+import time
 headers = {
     'Content-Type': 'application/json',
 }
@@ -29,33 +30,19 @@ print ("%s" %r)
 device1 = r['result']['deviceList'][0]['deviceId']
 print ("%s" %device1)
 
-#on
-# x = {
-# smartlife.iot.smartbulb.lightingservice: [
-# transition_light_state: [
-# {on_off: '1'}
-# {transition_period: '50'}]
-# ]
-# 	}
+while 1:
 
+	#	data_4 ='{"method": "passthrough", "params":{"deviceId": "8012C3C1DED0BCD794179E8675A70FE9189105B5","requestData": json.dumps()}'
+	data_4 = '{"method":"passthrough", "params": {"deviceId": "8012C3C1DED0BCD794179E8675A70FE9189105B5", "requestData": "{\\"smartlife.iot.smartbulb.lightingservice\\":{\\"transition_light_state\\":{\\"on_off\\":1}}}" }}'
+	response = requests.post('https://wap.tplinkcloud.com/?token=%s'%token1,headers=headers, data=data_4)
+	r = response.text
+	print ("%s" %r)
 
+	time.sleep(5)
 
-
-data_4 ='{"method": "passthrough", "params":{"deviceId": "8012C3C1DED0BCD794179E8675A70FE9189105B5", "requestData": "{\"smartlife.iot.smartbulb.lightingservice\":{\"transition_light_state\": {\"on_off\": 1}}}"}}'
-
-
-response = requests.post('https://wap.tplinkcloud.com/?token=%s'%token1,headers=headers, data=data_4)
-# r = response.json()
-# print ("%s" %r)
-
-
-'''
-params = (
-    ('token', '74adcc7e-64f7-47c1-a751-dece6d2f4704 HTTP/1.1'),
-)
-
-data = '{"method":"passthrough", "params": {"deviceId": device1, "requestData": "{\\"system\\":{\\"set_relay_state\\":{\\"state\\":1}}}" }}'
-
-response = requests.post('https://eu-wap.tplinkcloud.com/', headers=headers, params=params, data=data)
-
-'''
+	#	data_4 ='{"method": "passthrough", "params":{"deviceId": "8012C3C1DED0BCD794179E8675A70FE9189105B5","requestData": json.dumps()}'
+	data_4 = '{"method":"passthrough", "params": {"deviceId": "8012C3C1DED0BCD794179E8675A70FE9189105B5", "requestData": "{\\"smartlife.iot.smartbulb.lightingservice\\":{\\"transition_light_state\\":{\\"on_off\\":0}}}" }}'
+	response = requests.post('https://wap.tplinkcloud.com/?token=%s'%token1,headers=headers, data=data_4)
+	r = response.text
+	print ("%s" %r)
+	time.sleep(5)
