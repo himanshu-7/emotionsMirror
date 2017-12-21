@@ -1,5 +1,5 @@
 ########### Python 2.7 #############
-import httplib, urllib, base64, json, requests, time
+import httplib, urllib, base64, json, requests, time, urllib
 
 headers_octet = {
     # Request headers
@@ -17,30 +17,33 @@ headers = {
     'Content-Type': 'application/json'
 }
 
-params = urllib.urlencode({
+params = urllib\
+    .urlencode({
     # Request parameters
     'returnFaceId': 'true',
     'returnFaceLandmarks': 'false',
     'returnFaceAttributes': '',
 })
-#
-#body1 = F:\Python\emotions_mirror\emotionsMirror\200px-Katrina_Kaif.jpg
-#body2 = F:\Python\emotions_mirror\emotionsMirror\220px-Katrina_Kaif.jpg
+
+
+raw_input("Press Enter to continue...")
+resource = urllib.urlopen("http://192.168.1.39:8080/photo.jpg")
+output = open("file01.jpg", "wb")
+output.write(resource.read())
+output.close()
 
 body1 = ""
-# filename = 'F:\Python\emotions_mirror\emotionsMirror\Katrina_Kaif_1.jpg'
-filename = 'himanshu_7.jpg'
+filename = 'file01.jpg'
 f = open(filename, "rb")
 body1 = f.read()
 f.close()
+
 
 body2 = ""
 filename = 'himanshu_6.jpg'
 f = open(filename, "rb")
 body2 = f.read()
 f.close()
-
-
 
 try:
     conn = httplib.HTTPSConnection('westus.api.cognitive.microsoft.com')
