@@ -84,7 +84,7 @@ def Onclose():
 print("[INFO] warming up camera...")
 vs = VideoStream(src = 0).start()
 time.sleep(2.0)
-outputPath = "/media/chinmay/Important/ABHYAS/playground/tkinter-photo-booth/"
+outputPath = "your path here"
 frame = None
 thread = None
 stopEvent = None
@@ -99,7 +99,7 @@ f = tki.Frame(root)
 f.pack()
 btn1 = tki.Button(f, text="Snapshot!", command=takeSnapshot)
 btn1.pack(side="right", padx=10, pady=10)
-# btn2 = tki.Button(f, text="Quit", command = Destroy.root)
+# btn2 = tki.Button(f, text="Quit", command = root.destroy)
 # btn2.pack(side="left", padx=10, pady=10)
 
 # start a thread that constantly pools the video sensor for
@@ -107,6 +107,6 @@ btn1.pack(side="right", padx=10, pady=10)
 stopEvent = threading.Event()
 thread = threading.Thread(target=videoLoop, args=())
 thread.start()
-root.wm_protocol("WM_Delete_window", Onclose)
+root.protocol("WM_DELETE_WINDOW", Onclose)
 
 root.mainloop()
