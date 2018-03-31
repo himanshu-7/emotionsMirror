@@ -27,7 +27,7 @@ params = urllib\
 
 
 raw_input("Press Enter to continue...")
-resource = urllib.urlopen("http://192.168.1.39:8080/photo.jpg")
+resource = urllib.urlopen("http://192.168.0.105:8080/photo.jpg")
 output = open("file01.jpg", "wb")
 output.write(resource.read())
 output.close()
