@@ -10,7 +10,7 @@ from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 
 import cv2								# obviously...
-#import RPi.GPIO as GPIO					# funny button to click a photo
+import RPi.GPIO as GPIO			        # funny button to click a photo
 import datetime 						# might be useful later
 import time
 from lazyme.string import color_print   # debugging colorful prints is easier
@@ -66,15 +66,15 @@ class Faces:
 		angerVal = self.emotionToVal(self.anger)
 		surpriseVal = self.emotionToVal(self.surprise)
 		if(joyVal == sorrowVal and joyVal == angerVal and joyVal == surpriseVal):                              #if values of all emotions are equal, set emotion to neutral 
-			return 'NEUTRAL'
+			return 'Neutral'
 		elif(joyVal > sorrowVal and joyVal > angerVal and joyVal > surpriseVal):                              #if joy is greater than other emotions, set emotion to Happy
-			return 'HAPPY :)'
+			return 'Happy'
 		elif(sorrowVal > joyVal and sorrowVal > angerVal and sorrowVal > surpriseVal):                        #if sorrow is greater than other emotions, set emotion to Sad
-			return 'SAD :('
+			return 'Sad'
 		elif(angerVal > joyVal and angerVal > sorrowVal and angerVal > surpriseVal):                          #if anger is greater than other emotions, set emotion to Angry
-			return 'You look ANGRY!!!.......Calm Dowm'
+			return 'Angry'
 		elif(surpriseVal > joyVal and surpriseVal > angerVal and surpriseVal > sorrowVal):                    #if surprise is greater than other emotions, set emotion to surprise 
-			return 'Surprised!!'
+			return 'Surprised'
 
 		else:
 			return 'Sorry!! Please try again'
@@ -109,7 +109,7 @@ def videoLoop():
 	try:
 		while not stopEvent.is_set():
 			frame = vs.read()
-			#frame = imutils.resize(frame, width=300)
+			frame = imutils.resize(frame, width=1280, height=720)
 
 			# the channels, then convert to PIL and ImageTk format
 			image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -186,8 +186,8 @@ def takeSnapshot(eV=None):
 				color_print("no face in callback", color = 'red')
 			for value in range(0,len(faceObj)):
 				final_emotion = faceObj[value].emotion()
-				cv2.rectangle(new_img, (faceObj[value].x1, faceObj[value].y1), (faceObj[value].x2, faceObj[value].y2), (255,0,0), 2)
-				cv2.putText(new_img, final_emotion, ((faceObj[value].x1)+5,(faceObj[value].y1)-10), cv2.FONT_HERSHEY_PLAIN, 2, (255,255,255), 2, cv2.LINE_AA)
+				cv2.rectangle(new_img, (faceObj[value].x1, faceObj[value].y1), (faceObj[value].x2, faceObj[value].y2), (255,255,255), 2)
+				cv2.putText(new_img, final_emotion, ((faceObj[value].x1)+5,(faceObj[value].y1)-10), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,255), 2, cv2.CV_AA)
 				# cv2.namedWindow('emo_img')
 			cv2.imwrite(p, new_img)
 	display_image()
@@ -197,6 +197,7 @@ def display_image():
 	global panelB
 
 	image = cv2.imread(filename)
+	image = imutils.resize(image, height=240, width=480)
 	# image = cv2.flip(image,1)
 	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 	image = Image.fromarray(image)
@@ -205,7 +206,7 @@ def display_image():
 	if panelB is None:
 		panelB = tki.Label(image = image)
 		panelB.image = image
-		panelB.pack(side="left", padx =10, pady=10)
+		panelB.pack(side="right", padx =10, pady=10)
 	else:
 		# panelA = Label(image= image)
 		panelB.configure(image=image)
@@ -216,8 +217,6 @@ def display_image():
 def forceExit():                
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		print "pressed q"
-		cv2.destroyAllWindows()
-		cap.release()
 		GPIO.cleanup()  # Release resource
 		quit()
 		
@@ -230,16 +229,16 @@ def onClose():
 	root.quit()
 	vs.stop()
 	stopEvent.set()
-#	GPIO.cleanup()  # Release resource   
+	GPIO.cleanup()  # Release resource   
  
 
 if __name__ == '__main__':	
 	# initialize the pins (don't forget to release the GPIO (cleanup)
-#	GPIO.setmode(GPIO.BOARD)
+	GPIO.setmode(GPIO.BOARD)
 	
 	# pull up the input and register the callback, don't press quicker than 1000ms
-#	GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#	GPIO.add_event_detect(buttonPin, GPIO.RISING, callback=takeSnapshot, bouncetime=1000)
+	GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.add_event_detect(buttonPin, GPIO.RISING, callback=takeSnapshot, bouncetime=1000)
 	
 	try:
 		credentials = GoogleCredentials.get_application_default()
@@ -249,9 +248,9 @@ if __name__ == '__main__':
 
 			
 	print("warming up camera...")
-	vs = VideoStream(src = 0).start()
+	vs = VideoStream(src = 0, resolution=(1280,720)).start()
 	time.sleep(2.0)
-	outputPath = "F:\Python\emotions_mirror\emotionsMirror"
+	outputPath = "/home/pi/Desktop/iot_emotionsMirror"
 	frame = None
 	thread = None
 	stopEvent = None
@@ -267,8 +266,6 @@ if __name__ == '__main__':
 	
 	btn1 = tki.Button(f, text="Snapshot!", command=takeSnapshot)
 	btn1.pack(side="right", padx=10, pady=10)
-	# btn2 = tki.Button(f, text="Quit", command = Destroy.root)
-	# btn2.pack(side="left", padx=10, pady=10)
 
 	# start a thread for recently read frame
 	stopEvent = threading.Event()
@@ -277,5 +274,8 @@ if __name__ == '__main__':
 	
 	# what happens on window close: callback
 	root.wm_protocol('WM_DELETE_WINDOW', onClose)
-
+	
 	root.mainloop()
+	# force quit remains to be implemented
+	# while(True):
+	#	forceExit()	
