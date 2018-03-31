@@ -15,15 +15,8 @@ import time
 
 def videoLoop():
 	global panelA, frame
-	# DISCLAIMER:
-	# I'm not a GUI developer, nor do I even pretend to be. This
-	# try/except statement is a pretty ugly hack to get around
-	# a RunTime error that Tkinter throws due to threading
 	try:
-		# keep looping over frames until we are instructed to stop
 		while not stopEvent.is_set():
-			# grab the frame from the video stream and resize it to
-			# have a maximum width of 300 pixels
 			frame = vs.read()
 			#frame = imutils.resize(frame, width=300)
 	
@@ -51,12 +44,10 @@ def videoLoop():
 
 def takeSnapshot():
 	global filename
-	# grab the current timestamp and use it to construct the
+
 	# output path
-	#ts = datetime.datetime.now()
 	filename = "capture.jpg"
 	p = os.path.sep.join((outputPath, filename))
-
 	# save the file
 	cv2.imwrite(p, frame.copy())
 	print("[INFO] {} saved".format(filename))
@@ -65,7 +56,6 @@ def takeSnapshot():
 def display_image():
 	global panelB
 
-	
 	image = cv2.imread(filename)
 	image = cv2.flip(image,1)
 	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
@@ -83,13 +73,12 @@ def display_image():
 	# panelA.pack(side="left", padx = 10, pady = 10)
 
 
-
-def Quit():
+def Onclose():
 	# set the stop event, cleanup the camera, and allow the rest of
 	# the quit process to continue
 	print("[INFO] closing...")
 	vs.stop()
-	root.destroy()
+	stopEvent.set()
 	root.quit()
 
 print("[INFO] warming up camera...")
@@ -108,19 +97,16 @@ panelB = None
 # frame and save it to file
 f = tki.Frame(root)
 f.pack()
-btn1 = tki.Button(f, text="Snapshot!",
-	command=takeSnapshot)
-btn1.pack(side="right", padx=10,
-	pady=10)
-btn2 = tki.Button(f, text="Quit",
-	command=Quit)
-btn2.pack(side="left", padx=10,
-	pady=10)
+btn1 = tki.Button(f, text="Snapshot!", command=takeSnapshot)
+btn1.pack(side="right", padx=10, pady=10)
+# btn2 = tki.Button(f, text="Quit", command = Destroy.root)
+# btn2.pack(side="left", padx=10, pady=10)
 
 # start a thread that constantly pools the video sensor for
 # the most recently read frame
 stopEvent = threading.Event()
 thread = threading.Thread(target=videoLoop, args=())
 thread.start()
+root.wm_protocol("WM_Delete_window", Onclose)
 
 root.mainloop()
